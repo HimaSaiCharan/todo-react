@@ -59,7 +59,12 @@ class Input extends Component {
 class TaskList extends Component {
   constructor(props) {
     super(props);
-    this.state = { value: "", tasks: this.props.tasks };
+    console.log(props);
+    this.state = {
+      value: "",
+      tasks: this.props.taskList.tasks,
+      title: this.props.taskList.taskTitle,
+    };
     this.toggle = this.toggle.bind(this);
     this.addTask = this.addTask.bind(this);
   }
@@ -78,7 +83,7 @@ class TaskList extends Component {
     this.setState((prev) => {
       const tasks = [
         ...prev.tasks,
-        { description, taskId: Date.now(), done: false },
+        { description, taskId: prev.tasks.length + 1, done: false },
       ];
 
       return { ...prev, tasks };
@@ -88,6 +93,7 @@ class TaskList extends Component {
   render() {
     return (
       <div>
+        <h3>{this.state.title}</h3>
         <Input addTask={this.addTask} />
         <ul>
           {this.state.tasks.map((task) => {
@@ -99,22 +105,62 @@ class TaskList extends Component {
   }
 }
 
+class TaskListContainer extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div>
+        {this.props.todo.taskLists.map((taskList) => {
+          return <TaskList key={taskList.taskListId} taskList={taskList} />;
+        })}
+      </div>
+    );
+  }
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { tasks: [] };
+    // this.state = {
+    //   taskLists: [
+    //     {
+    //       tasks: [
+    //         { description: "Task 1", taskId: 1, done: false },
+    //         { description: "Task 2", taskId: 2, done: false },
+    //       ],
+    //       taskListId: 1,
+    //       taskTitle: "Default Task List",
+    //     },
+    //   ],
+    // };
+    this.state = { taskLists: [] };
+    this.addTaskList = this.addTaskList.bind(this);
+  }
+
+  addTaskList(title) {
+    this.setState((prev) => {
+      const taskLists = [
+        ...prev.taskLists,
+        {
+          tasks: [],
+          taskListId: this.state.taskLists.length + 1,
+          taskTitle: title,
+        },
+      ];
+
+      return { ...prev, taskLists };
+    });
   }
 
   render() {
     return (
       <>
         <h1>Todo List</h1>
-        <TaskList
-          tasks={[
-            { description: "buy milk", taskId: 1, done: false },
-            { description: "buy water", taskId: 2, done: false },
-          ]}
-        />
+        <Input addTask={this.addTaskList} placeholder="Add a task list" />
+        <TaskListContainer todo={this.state} />
       </>
     );
   }
