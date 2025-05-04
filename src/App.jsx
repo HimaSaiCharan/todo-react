@@ -99,17 +99,25 @@ class TaskList extends Component {
   }
 }
 
-function App() {
-  return (
-    <>
-      <TaskList
-        tasks={[
-          { description: "buy milk", taskId: 1, done: false },
-          { description: "buy water", taskId: 2, done: false },
-        ]}
-      />
-    </>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { tasks: [] };
+  }
+
+  render() {
+    return (
+      <>
+        <h1>Todo List</h1>
+        <TaskList
+          tasks={[
+            { description: "buy milk", taskId: 1, done: false },
+            { description: "buy water", taskId: 2, done: false },
+          ]}
+        />
+      </>
+    );
+  }
 }
 
 export default App;
